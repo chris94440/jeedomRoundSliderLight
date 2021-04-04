@@ -1,0 +1,823 @@
+<div class="eqLogic eqLogic-widget allowResize allowReorderCmd allowLayout #custom_layout#  #category# "
+		  style="min-height: 210px;min-width:220px; position: relative; width:#width#; height:#height#;
+				 background-color:#background-color#; color:#color#; border:#border#; border-radius:#border-radius#;#style#"
+		  data-eqType="#eqType#" data-eqLogic_id="#id#" data-eqLogic_uid="#uid#"  data-cat_color="#catcolore#" 
+		  data-version="#version#" data-translate-category="#translate_category#" data-category="#category#" data-tags="#tags#">
+		<span class="statusCmd"></span>
+		<center class="widget-name">
+		  <span class="reportModeVisible" style="display:none">#object_name#</span>
+		  <a href="#eqLink#" class="reportModeHidden" style="margin-right: 5px;">#name_display# </a>
+		</center> 
+		<div class="main cmd " data-type="info" data-cmd_id="#state_id#">
+          	<div class="separateDiv"></div>          
+            <center>
+              <div class="divLabel">
+                <span  class="spanLabel" ></span>
+              </div>
+            </center>
+          
+			<div class="secondary">		  
+				<div class="separateDiv"></div>
+				<div class="action_colorpicker cmd " data-type="info" data-cmd_id="#colorState_id#"></div>
+				<div id="shapeL" class="shapeL cmd" data-type="info" data-cmd_id="#lightState_id#"> </div>
+				<div id="shapeR" class="shapeR cmd" data-type="info" data-cmd_id="#tempState_id#"></div>
+				<img src="" class="image cmd " data-type="info" data-cmd_id="#isReachable_id#" id="imageCentrale">
+				<div>
+					<center>
+						<label class="labelPourcentage" id="lPourcentage"><b></b></label>
+					</center>
+				</div>
+			</div>
+			<div class="colorChoice"></div>
+		</div>
+			
+		<head>    
+			<link href="plugins/roundSliderLight/core/template/dashboard/import/roundslider.min.css" rel="stylesheet" />
+			<link rel="stylesheet" href="plugins/roundSliderLight/core/template/dashboard/ColorCircle/farbtastic.css" type="text/css" />
+			<script src="plugins/roundSliderLight/core/template/dashboard/import/roundslider.min.js"></script>
+			<script type="text/javascript" src="plugins/roundSliderLight/core/template/dashboard/ColorCircle/farbtastic.js"></script>			
+		</head>		 
+	</div>
+	<script>
+		writeToConsole('Entree dans le plugin round slider light | ' + 'eqlogic : ' + '#eqLogic_id#' + ' | uid : ' + '#uid#' );					
+		
+      	//Manage design en fonction de la présence ou non des commandes light, temperature et couleur
+		defineDesign('.eqLogic[data-eqLogic_id=' +'#id#' +']','##id#_cfgPrefColor1#','##id#_cfgPrefColor2#','##id#_cfgPrefColor3#','##id#_cfgPrefColor4#','##id#_cfgLabel#');     		
+			
+      	$('.eqLogic[data-eqLogic_id=#id#] .action_colorpicker').bind('click',(function () {
+			//console.log("click sur color picker");
+          	//console.log("HSL color : " + $.farbtastic('.eqLogic[data-eqLogic_id=#id#] .action_colorpicker').hsl);
+          	//console.log("RGB color : " + $.farbtastic('.eqLogic[data-eqLogic_id=#id#] .action_colorpicker').rgb);
+            //console.log("HEX color : " + $.farbtastic('.eqLogic[data-eqLogic_id=#id#] .action_colorpicker').color);
+         	var hexColor=$.farbtastic('.eqLogic[data-eqLogic_id=#id#] .action_colorpicker').color;
+          
+          	jeedom.cmd.execute({id: '#setColor_id#', value: {color: hexColor}});
+		}));
+      /*
+		$('.eqLogic[data-eqLogic_id=#id#] .action_colorpicker').farbtastic(function(color) {
+			writeToConsole("set new color for " + '#id#' + ' and the color is : ' + color);
+          	console.log("color : " + color + " - ancienne couleur : " + '#colorState#');
+          	console.log("HSL color : " + $.farbtastic('.eqLogic[data-eqLogic_id=#id#] .action_colorpicker').hsl);
+          	console.log("RGB color : " + $.farbtastic('.eqLogic[data-eqLogic_id=#id#] .action_colorpicker').rgb);
+            console.log("HEX color : " + $.farbtastic('.eqLogic[data-eqLogic_id=#id#] .action_colorpicker').color);
+          
+          	var rgbColor=$.farbtastic('.eqLogic[data-eqLogic_id=#id#] .action_colorpicker').rgb;
+          	var hexaColor=$.farbtastic('.eqLogic[data-eqLogic_id=#id#] .action_colorpicker').color;
+          	
+          //cas inti qui ne doit pas remettre a joue la couleur ==> au pire a faire dans le code php	
+          if (color != '#colorState#') {
+            	console.log("Maj de la couleur : " + color + '|' + hexaColor);
+              	jeedom.cmd.execute({id: '#setColor_id#', value: {color: hexaColor}});
+            }
+		});
+		*/
+
+		jeedom.cmd.update['#isReachable_id#'] = function(_options) {
+			$('.eqLogic[data-eqLogic_id=#id#] .main').attr('isReachable',_options.display_value);
+			writeToConsole('reachable update : ' + $('.eqLogic[data-eqLogic_id=#id#] .main').attr('isReachable'));
+			if ($('.eqLogic[data-eqLogic_id=#id#] .main#id#').attr('isReachable') == '1' || $('.eqLogic[data-eqLogic_id=#id#] .main').attr('isReachable').includes('#isReachable#')) {	
+				$('.eqLogic[data-eqLogic_id=#id#] .shapeL').roundSlider({disabled: false});
+				$('.eqLogic[data-eqLogic_id=#id#] .shapeR').roundSlider({disabled: false});			
+				$('.eqLogic[data-eqLogic_id=#id#] .image').css('opacity','1');
+			} else {
+				writeToConsole('on unbind le click');
+				$('.eqLogic[data-eqLogic_id=#id#] .shapeL').roundSlider({disabled: true});
+				$('.eqLogic[data-eqLogic_id=#id#] .shapeR').roundSlider({disabled: true});
+				$('.eqLogic[data-eqLogic_id=#id#] .image').unbind( 'click' );
+				$('.eqLogic[data-eqLogic_id=#id#] .image').css('opacity','0.3');
+			}		
+		}
+		jeedom.cmd.update['#isReachable_id#']({display_value:'#isReachable#',valueDate:'#valueDate#'});
+		
+		jeedom.cmd.update['#state_id#'] = function(_options) {
+			writeToConsole('Changement état de la lampe : ' + _options.display_value);
+			$('.eqLogic[data-eqLogic_id=#id#] .main').attr('state',_options.display_value);
+			imgColor('.eqLogic[data-eqLogic_id=' +'#id#' +']','#id#','##id#_cfgLightType#','##id#_lightSlider_MinValue#','##id#_lightSlider_MaxValue#','##id#_tempSlider_MinValue#','##id#_tempSlider_MaxValue#');
+		}
+		jeedom.cmd.update['#state_id#']({display_value:'#state#',valueDate:'#valueDate#'});
+		
+      	jeedom.cmd.update['#tempState_id#'] = function(_options) {
+			$('.eqLogic[data-eqLogic_id=#id#] .main').attr('tempState',_options.display_value);
+			$('.eqLogic[data-eqLogic_id=#id#] .shapeR').roundSlider({
+			  value:_options.display_value
+			});
+			imgColor('.eqLogic[data-eqLogic_id=' +'#id#' +']','#id#','##id#_cfgLightType#','##id#_lightSlider_MinValue#','##id#_lightSlider_MaxValue#','##id#_tempSlider_MinValue#','##id#_tempSlider_MaxValue#');
+		}
+		jeedom.cmd.update['#tempState_id#']({display_value:'#tempState#',valueDate:'#valueDate#'});
+		
+		jeedom.cmd.update['#lightState_id#'] = function(_options) {
+			$('.eqLogic[data-eqLogic_id=#id#] .main').attr('lightState',_options.display_value);
+			$('.eqLogic[data-eqLogic_id=#id#] .shapeL').roundSlider({
+			  value:_options.display_value
+			});
+			imgColor('.eqLogic[data-eqLogic_id=' +'#id#' +']','#id#','##id#_cfgLightType#','##id#_lightSlider_MinValue#','##id#_lightSlider_MaxValue#','##id#_tempSlider_MinValue#','##id#_tempSlider_MaxValue#');
+		}
+		jeedom.cmd.update['#lightState_id#']({display_value:'#lightState#',valueDate:'#valueDate#'});
+		
+		jeedom.cmd.update['#colorState_id#'] = function(_options) {
+			writeToConsole("update color for " + '#id#' + ' | new value : ' + _options.display_value + ' | color state id : ' + '#colorState_id#');
+		   	setColor(_options.display_value.substring(0,7),'.eqLogic[data-eqLogic_id=' + '#id#' + ']');
+		}
+		jeedom.cmd.update['#colorState_id#']({display_value:'#colorState#',valueDate:'#valueDate#'});
+      
+		function setColor(colorValue,eqId) {			
+			$.farbtastic($(eqId + ' .action_colorpicker')).setColor(colorValue);
+        }
+		
+		function writeToConsole(textToWrite) {
+			if( '##id#_cfgDebug#' && '##id#_cfgDebug#'.length >
+               0 && !'##id#_cfgDebug#'.includes('cfgDebug') && '##id#_cfgDebug#' && '##id#_cfgDebug#' == '1') {
+				console.log(textToWrite);
+			}
+		}
+
+
+		$('.eqLogic[data-eqLogic_id=#id#] .buttonColor1').bind('click',(function () {
+			//setColor('##id#_cfgPrefColor1#','.eqLogic[data-eqLogic_id=' + '#id#' + ']');
+			jeedom.cmd.execute({id: '#setColor_id#', value: {color: '##id#_cfgPrefColor1#'}});
+		}));
+		
+		$('.eqLogic[data-eqLogic_id=#id#] .buttonColor2').bind('click',(function () {
+			//setColor('##id#_cfgPrefColor2#','.eqLogic[data-eqLogic_id=' + '#id#' + ']');
+			jeedom.cmd.execute({id: '#setColor_id#', value: {color: '##id#_cfgPrefColor2#'}});
+		}));
+		
+		$('.eqLogic[data-eqLogic_id=#id#] .buttonColor3').bind('click',(function () {
+			//setColor('##id#_cfgPrefColor3#','.eqLogic[data-eqLogic_id=' + '#id#' + ']');
+			jeedom.cmd.execute({id: '#setColor_id#', value: {color: '##id#_cfgPrefColor3#'}});
+		}));	
+		
+		$('.eqLogic[data-eqLogic_id=#id#] .buttonColor4').bind('click',(function () {
+			//setColor('##id#_cfgPrefColor4#','.eqLogic[data-eqLogic_id=' + '#id#' + ']');
+			jeedom.cmd.execute({id: '#setColor_id#', value: {color: '##id#_cfgPrefColor4#'}});
+		}));
+
+		$('.eqLogic[data-eqLogic_id=#id#] .image').bind('click',(function () {
+          	if ($('.eqLogic[data-eqLogic_id=' +'#id#' +']' +' .main').attr('isReachable') == '1' || $('.eqLogic[data-eqLogic_id=' +'#id#' +']' +' .main').attr('isReachable') == '#isReachable#') {
+				onOffLight('.eqLogic[data-eqLogic_id=' +'#id#' +']','#lightOff_id#','#lightOn_id#');
+			} else {
+				writeToConsole('Lampe non accessible');
+			}
+		}));
+		
+		
+		function onOffLight(eqId,id_off,id_on){
+			writeToConsole('click sur lampe => onOffLight : ' + $(eqId +'  .main').attr('state') + '| if off : ' + id_off + ' | id on : ' + id_on);
+			if ($(eqId +'  .main').attr('state') == "#" +"state" + "#") {
+				if ($(eqId +'  .main').attr('displayLightRoundSlider') == '1') {
+					if ($(eqId +'  .main').attr('lightState') > 0) {
+						jeedom.cmd.execute({ id: id_off, success:  function(valeur_courante) {
+						}});
+					} else {
+						jeedom.cmd.execute({ id: id_on, success:  function(valeur_courante) {
+						}});
+					}
+				} else {
+					if ($(eqId +'  .main').attr('tempState') > 0) {
+						jeedom.cmd.execute({ id: id_off, success:  function(valeur_courante) {
+						}});
+					} else {
+						jeedom.cmd.execute({ id: id_on, success:  function(valeur_courante) {
+						}});
+					}
+				}
+			} else {
+				if ($(eqId +'  .main').attr('state') == '1') {
+					writeToConsole('On eteind');
+					jeedom.cmd.execute({ id: id_off, success:  function(valeur_courante) {
+					}});
+				} else {
+					writeToConsole('On allume');
+					jeedom.cmd.execute({ id: id_on, success:  function(valeur_courante) {
+					}});
+				}
+			}
+		}
+		
+		function sliderLight(circleType,angle,roundSliderType) {		
+			  $('.eqLogic[data-eqLogic_id=#id#] .shapeL').roundSlider({
+				sliderType: roundSliderType,
+				circleShape: circleType,
+				showTooltip: false,
+				width: 10,
+				min:'##id#_lightSlider_MinValue#',
+				max:'##id#_lightSlider_MaxValue#',
+				startAngle:angle,
+				change: function (args) {
+					writeToConsole('func sliderLight - change value');
+					jeedom.cmd.execute({id :'#lightSlider_id#', value : {slider : args.value}});
+				}
+			  });	
+		}
+		
+		function sliderTemperature(circleType,angle,roundSliderType) {
+		  $('.eqLogic[data-eqLogic_id=#id#] .shapeR').roundSlider({
+			sliderType: roundSliderType,
+			circleShape: circleType,
+			showTooltip: false,
+			width: 10,
+			min:'##id#_tempSlider_MinValue#',
+			max:'##id#_tempSlider_MaxValue#',
+			startAngle:angle,
+			change: function (args) {	          	
+				jeedom.cmd.execute({id :'#tempSlider_id#', value : {slider : args.value}});
+			}
+		  });		  		  	
+		}  
+			
+		function defineDesign(eqId,prefColor1,prefColor2,prefColor3,prefColor4,label){
+			//manage label		
+			if(label.length > 0 && !label.includes('label')) {
+				$(eqId + ' .spanLabel').text(label);
+              	$(eqId + ' .divlabel').show();
+                if('##id#_cfgColorLabel#'.length > 0 && !'##id#_cfgColorLabel#'.includes('#000000')) {
+                    $(eqId + ' .divLabel').css('background-color', '##id#_cfgColorLabel#');
+                }
+			} else {
+				$(eqId + ' .divlabel').hide();
+              	$(eqId + ' .divLabel').css('background-color', 'transparent');
+              	$(eqId + ' .main').height(($(eqId + ' .main').height() - 20)+ "px");
+			}
+		 
+          	
+			
+			if('##id#_cfgColorBorderEq#'.length > 0 && !'##id#_cfgColorBorderEq#'.includes('#000000')) {
+				$(eqId + ' .main').css('border-color','##id#_cfgColorBorderEq#');
+              	if('##id#_cfgTypeBorderEq#'.length > 0) {
+                   $(eqId + ' .main').css('border-style','##id#_cfgTypeBorderEq#');
+                   if('##id#_cfgWidthBorderEq#'.length > 0) {
+                      $(eqId + ' .main').css('border-width','##id#_cfgWidthBorderEq#' + 'px');
+                   }
+
+              } else {
+                  $(eqId + ' .main').css('border-style','none');
+              }
+			}
+		  
+			
+			$(eqId + ' .main').attr('displayColor','0');
+			if ('#colorState_id#'.length > 0 && !'#colorState_id#'.includes('colorState')) {
+				$(eqId + ' .main').attr('displayColor','1');
+			}
+			
+			$(eqId + ' .main').attr('displayTempRoundSlider','0');
+			if ('#tempState_id#'.length > 0 && !'#tempState_id#'.includes('tempState')) {
+				$(eqId + ' .main').attr('displayTempRoundSlider','1');
+			}
+			
+			$(eqId + ' .main').attr('displayLightRoundSlider','0');
+			if ('#lightState_id#'.length > 0 && !'#lightState_id#'.includes('lightState')) {
+				$(eqId + ' .main').attr('displayLightRoundSlider','1');
+			}						
+						
+			if ($(eqId + ' .main').attr('displayColor') == '1'
+				&& $(eqId + ' .main').attr('displayLightRoundSlider')== '1'
+				&& $(eqId + ' .main').attr('displayTempRoundSlider') == '1') {
+				writeToConsole('On affiche à la fois la gestion de la couleur, la gestion de l\'intensité et la température');
+				
+				$(eqId + ' .action_colorpicker').show();
+				sliderLight('half-left','0','min-range');
+				sliderTemperature('half-right','0','min-range');
+				cssColorAndRoundSlider(eqId);
+
+				//surcharge positionnement image
+				$(eqId + ' .image').css('top','-148px');
+				$(eqId + ' .image').css('left','174px');
+				
+				$(eqId + ' .labelPourcentage').css('top','-168px');
+				
+				$(eqId + ' .shapeL').css('float','left');
+				$(eqId + ' .shapeL').css('left','7px');
+				
+				$(eqId + ' .shapeR').css('float','right');
+				$(eqId + ' .shapeR').css('right','7px');
+
+				
+				$(eqId + ' .shapeR').data('roundSlider').control.find('.rs-range-color').css('background', 'linear-gradient(90deg,white,yellow,orange)');
+				$(eqId + ' .shapeL').data('roundSlider').control.find('.rs-range-color').css('background', 'linear-gradient(90deg,grey,yellow)');	
+				
+              	console.log("background-color : " + $(eqId + ' .main').parent('div').css('backgroundColor'));
+				$(eqId +' .rs-control .rs-bg-color').css('background',$(eqId + ' .main').parent('div').css('backgroundColor'));				
+			} else if ($(eqId + ' .main').attr('displayColor')== '1'
+				&& $(eqId + ' .main').attr('displayLightRoundSlider')== '1') {
+				writeToConsole('On affiche à la fois la gestion de la couleur et  la gestion de l\'intensité ');
+				
+				$(eqId + ' .action_colorpicker').show();
+				$(eqId + ' .shapeR').hide();	
+				$(eqId + ' .shapeL').css('float','right');	
+				$(eqId + ' .shapeL').css('right','5px');				
+
+				sliderLight('full','-90','');	
+				cssLightRoundSlider(eqId);		
+				cssColorAndRoundSlider(eqId);
+				
+              	console.log("background-color : " + $(eqId + ' .main').parent('div').css('backgroundColor'));
+				$(eqId +' .rs-control .rs-bg-color').css('background',$(eqId + ' .main').parent('div').css('backgroundColor'));								
+				
+			} else if ($(eqId + ' .main').attr('displayColor') == '1'
+				&& $(eqId + ' .main').attr('displayTempRoundSlider') == '1' ) {
+				writeToConsole('On affiche à la fois la gestion de la couleur et  la température ');
+				
+				$(eqId + ' .action_colorpicker').show()
+				$(eqId + ' .shapeL').hide();
+				sliderTemperature('full','-90','');
+				$(eqId + ' .shapeR').css('float','right');
+				$(eqId + ' .shapeR').css('right','5px');
+				cssTempRoundSlider(eqId);	
+				cssColorAndRoundSlider(eqId);				
+			
+				console.log("background-color : " + $(eqId + ' .main').parent('div').css('backgroundColor'));
+				$(eqId +' .rs-control .rs-bg-color').css('background',$(eqId + ' .main').parent('div').css('backgroundColor'));								
+				
+			} else if ($(eqId + ' .main').attr('displayLightRoundSlider') == '1'
+				&& $(eqId + ' .main').attr('displayTempRoundSlider') == '1' ) {
+				writeToConsole('On affiche à la fois la gestion de la gestion de l\'intensité et la température');
+				
+				$(eqId + ' .action_colorpicker').hide();
+				sliderLight('half-left','0','min-range');
+				sliderTemperature('half-right','0','min-range');
+							
+				$(eqId + ' .shapeR').data('roundSlider').control.find('.rs-range-color').css('background', 'linear-gradient(90deg,white,yellow,orange)');
+				$(eqId + ' .shapeR').data('roundSlider').control.find('.rs-path-color').css('transform', 'rotate(-180deg)');
+				$(eqId + ' .shapeR').data("roundSlider").control.find(".rs-path-color").css("background-size", "100%");
+				$(eqId + ' .shapeR').data("roundSlider").control.find(".rs-control").css("background-color","#090808");
+				$(eqId + ' .shapeR').data("roundSlider").control.find(".rs-handle").css("background-color","#090808");
+				
+				$(eqId + ' .shapeL').data('roundSlider').control.find('.rs-range-color').css('background', 'linear-gradient(90deg,grey,yellow)');	
+				$(eqId + ' .shapeL').data('roundSlider').control.find('.rs-path-color').css('transform', 'rotate(-180deg)');
+				$(eqId + ' .shapeL').data("roundSlider").control.find(".rs-path-color").css("background-size", "100%");
+				$(eqId + ' .shapeL').data("roundSlider").control.find(".rs-control").css("background-color","#090808");
+				$(eqId + ' .shapeL').data("roundSlider").control.find(".rs-handle").css("background-color","#090808");
+				
+				
+				cssJustRoundSlider(eqId);
+				
+				$(eqId + ' .shapeL').css('float','left');
+				$(eqId + ' .shapeR').css('float','right');
+				$(eqId + ' .shapeL').css('left','7px');
+				$(eqId + ' .shapeR').css('right','7px');
+              
+				$(eqId +' .rs-control .rs-bg-color').css('background',$(eqId + ' .main').parent('div').css('backgroundColor'));								
+
+			} else if ($(eqId + ' .main').attr('displayLightRoundSlider') == '1' ) {
+				writeToConsole('On affichela gestion de l\'intensité ');
+					
+				$(eqId + ' .action_colorpicker').hide();
+				$(eqId + ' .shapeR').hide();
+				
+				sliderLight('full','-90','');
+				cssLightRoundSlider(eqId);				
+				cssJustRoundSlider(eqId);
+				
+				$(eqId + ' .shapeL').css('left','7px');			
+              
+				$(eqId +' .rs-control .rs-bg-color').css('background',$(eqId + ' .main').parent('div').css('backgroundColor'));								
+				
+			} else if ($(eqId + ' .main').attr('displayTempRoundSlider') == '1' ) {
+				writeToConsole('On affiche la gestion de  la température');
+				
+				$(eqId + ' .action_colorpicker').hide();
+				$(eqId + ' .shapeL').hide();
+				sliderTemperature('full','-90','');
+			
+				cssTempRoundSlider(eqId);
+				cssJustRoundSlider(eqId);
+				
+				$(eqId + ' .shapeR').css('left','7px');		
+				
+				$(eqId +' .rs-control .rs-bg-color').css('background',$(eqId + ' .main').parent('div').css('backgroundColor'));
+			} else if ($(eqId + ' .main').attr('displayColor') == '1' ) {
+				writeToConsole('On affiche la gestion de la couleur');
+				$(eqId + ' .action_colorpicker').show();
+				$(eqId + ' .shapeL').hide();
+				$(eqId + ' .shapeR').hide();
+
+				$(eqId + ' .image').hide();
+				$(eqId + ' .labelPourcentage').hide();
+				$(eqId + ' .main').width('152px');
+				//$(eqId + ' .secondary').width('152px');
+
+			} else {
+				writeToConsole('Erreur on affiche rien');
+			}
+          
+          	          	
+          	$(eqId + ' .secondary').width($(eqId + ' .main').width()+"px");
+          
+			//Affichage bouton raccourci couleur
+			$(eqId + ' .colorChoice').hide();
+			if(	(prefColor1.length > 0 && !prefColor1.includes('#000000')) || 
+				(prefColor2.length > 0 && !prefColor2.includes('#000000')) ||
+				(prefColor3.length > 0 && !prefColor3.includes('#000000')) || 
+				(prefColor4.length > 0 && !prefColor4.includes('#000000')) ) {
+				
+				var widthNewMain= $(eqId + ' .main').width() + 65;
+				
+				$(eqId + ' .main').width(widthNewMain + "px");
+				$(eqId + ' .colorChoice').show();
+				
+				if (prefColor1.length > 0 && !prefColor1.includes('#000000')) {
+					$(eqId + ' .colorChoice').append("<div class=\"buttonColor1\"></div>");						
+					$(eqId + ' .buttonColor1').css('background-color',prefColor1);
+				}
+				
+				if(prefColor2.length > 0 && !prefColor2.includes('#000000')) {
+					$(eqId + ' .colorChoice').append("<div class=\"buttonColor2\"></div>");	
+					$(eqId + ' .buttonColor2').css('background-color',prefColor2);
+				}
+				if (prefColor3.length > 0 && !prefColor3.includes('#000000')) {
+					$(eqId + ' .colorChoice').append("<div class=\"buttonColor3\"></div>");	
+					$(eqId + ' .buttonColor3').css('background-color',prefColor3);
+				}
+				
+				if (prefColor4.length > 0 && !prefColor4.includes('#000000')) {
+					$(eqId + ' .colorChoice').append("<div class=\"buttonColor4\"></div>");	
+					$(eqId + ' .buttonColor4').css('background-color',prefColor4);
+				}
+              
+            }
+          
+          	if('##id#_cfgLabel#'.length <= 0 || '##id#_cfgLabel#'.includes('label')) {
+              console.log("on entre dans la réduction");
+              $(eqId + ' .secondary').css("top","-20px");
+              $(eqId + ' .colorChoice').css("top","-20px");
+            }
+		}
+		
+		
+		function cssColorAndRoundSlider(eqId) {			
+			$(eqId + ' .labelPourcentage').css('left','76px');
+			$(eqId + ' .labelPourcentage').css('top','-145px');
+			
+			$(eqId + ' .main').width('330px');
+			
+			$(eqId + ' .image').css('left','177px');
+			$(eqId + ' .image').css('top','-125px');			
+          
+          	$(eqId + ' .colorChoice').css("top","0px");
+          	$(eqId + ' .secondary').css("top","0px");
+          
+		}
+		
+		function cssJustRoundSlider(eqId) {
+			$(eqId + ' .image').css('top','-149px');
+			$(eqId + ' .image').css('left','28px');
+			
+			$(eqId + ' .labelPourcentage').css('top','-168px');
+
+			$(eqId + ' .main').width('185px');
+
+          	$(eqId + ' .colorChoice').css("top","0px");
+          	$(eqId + ' .secondary').css("top","0px");
+
+		}
+		
+		function cssLightRoundSlider(eqId) {
+			$(eqId + ' .shapeL').data('roundSlider').control.find(".rs-path-color").css("background", "conic-gradient(grey,yellow)");
+			$(eqId + ' .shapeL').data('roundSlider').control.find('.rs-path-color').css('transform', 'rotate(-180deg)');
+			$(eqId + ' .shapeL').data("roundSlider").control.find(".rs-path-color").css("background-size", "100%");
+			$(eqId + ' .shapeL').data("roundSlider").control.find(".rs-path-color").css("transform", "rotate(-180deg)");
+			$(eqId + ' .shapeL').data("roundSlider").control.find(".rs-control").css("background-color","#090808");
+			$(eqId + ' .shapeL').data("roundSlider").control.find(".rs-handle").css("background-color","#090808");
+
+           	$(eqId + ' .colorChoice').css("top","0px");
+          	$(eqId + ' .secondary').css("top","0px");
+
+			$('.rs-control .rs-bg-color').css('background',$('.eqLogic[data-eqLogic_id=#id#] .main').parent('div').css('backgroundColor'));
+		}
+		
+		function cssTempRoundSlider(eqId) {
+			$(eqId + ' .shapeR').data('roundSlider').control.find('.rs-range-color').css('background', "conic-gradient(white,yellow,orange)");
+			$(eqId + ' .shapeR').data('roundSlider').control.find(".rs-path-color").css("background", "conic-gradient(white,yellow,orange)");
+			$(eqId + ' .shapeR').data('roundSlider').control.find('.rs-path-color').css('transform', 'rotate(-180deg)');
+			$(eqId + ' .shapeR').data("roundSlider").control.find(".rs-path-color").css("background-size", "100%");
+			$(eqId + ' .shapeR').data("roundSlider").control.find(".rs-path-color").css("transform", "rotate(-180deg)");
+			$(eqId + ' .shapeR').data("roundSlider").control.find(".rs-control").css("background-color","#090808");
+			$(eqId + ' .shapeR').data("roundSlider").control.find(".rs-handle").css("background-color","#090808");
+          
+          	$(eqId + ' .colorChoice').css("top","0px");
+          	$(eqId + ' .secondary').css("top","0px");
+			
+			$('.rs-control .rs-bg-color').css('background',$('.eqLogic[data-eqLogic_id=#id#] .main').parent('div').css('backgroundColor'));
+		}
+		
+		function calcPourcentage(value,max,min){ 
+		  if (isNaN(max)) {
+			return Math.round(value);        
+		  } else {
+			return Math.round((((value-min)*100)/(max-min)));
+		  };
+		}
+    
+	function imgColor(eqId,id,typeLight,minLight,maxLight,minTemp,maxTemp) {				
+		writeToConsole('img - eqId : ' + eqId + '| id : ' + id+ '| type lampe : ' +typeLight + '| minLight : ' +minLight+ '| maxLight : ' +maxLight+ '| minTemp : ' +minTemp+ '| maxTemp : ' +maxTemp);
+		var pourcentageSliderValue#id#;
+		var minValue#id#;
+		if ($(eqId + ' .main').attr('displayLightRoundSlider') == '1') {
+			pourcentageSliderValue#id#= calcPourcentage($(eqId + ' .main').attr('lightState'),maxLight,minLight);
+			writeToConsole('calcul light : ' + $(eqId + ' .main').attr('lightState') + '|min : ' + minLight + '| max : ' +maxLight + '|result : ' + pourcentageSliderValue#id#);
+			minValue#id#=minLight;
+		} else {
+			pourcentageSliderValue#id#= calcPourcentage($(eqId + ' .main').attr('tempState'),maxTemp,minTemp);
+			writeToConsole('calcul light : ' + $(eqId + ' .main').attr('tempState') + '|min : ' + minTemp + '| max : ' +maxTemp + '|result : ' + pourcentageSliderValue#id#);
+			minValu#id#e=minTemp;
+		}
+		
+		var i#id#;
+		if (pourcentageSliderValue#id# > 95) {
+			i#id#='_ON.png';
+		} else if (pourcentageSliderValue#id# > 90 && pourcentageSliderValue#id# <=95) {
+			i#id#='_90.png';
+		} else if (pourcentageSliderValue#id# > 85 && pourcentageSliderValue#id# <=90) {
+			i#id#='_90.png';
+		} else if (pourcentageSliderValue#id# > 80 && pourcentageSliderValue#id# <=85) {
+			i#id#='_80.png';
+		} else if (pourcentageSliderValue#id# > 75 && pourcentageSliderValue#id# <=80) {
+			i#id#='_80.png';
+		} else if (pourcentageSliderValue#id# > 70 && pourcentageSliderValue#id# <=75) {
+			i#id#='_70.png';
+		} else if (pourcentageSliderValue#id# > 65 && pourcentageSliderValue#id# <=70) {
+			i#id#='_70.png';
+		} else if (pourcentageSliderValue#id# > 60 && pourcentageSliderValue#id# <=65) {
+			i#id#='_60.png';
+		} else if (pourcentageSliderValue#id# > 55 && pourcentageSliderValue#id# <=60) {
+			i#id#='_60.png';
+		} else if (pourcentageSliderValue#id# > 50 && pourcentageSliderValue#id# <=55) {
+			i#id#='_50.png';
+		} else if (pourcentageSliderValue#id# > 45 && pourcentageSliderValue#id# <=50) {
+			i#id#='_50.png';
+		} else if (pourcentageSliderValue#id# > 40 && pourcentageSliderValue#id# <=45) {
+			i#id#='_40.png';
+		} else if (pourcentageSliderValue#id# > 35 && pourcentageSliderValue#id# <=40) {
+			i#id#='_40.png';
+		} else if (pourcentageSliderValue#id# > 30 && pourcentageSliderValue#id# <=35) {
+			i#id#='_30.png';
+		} else if (pourcentageSliderValue#id# > 25 && pourcentageSliderValue#id# <=30) {
+			i#id#='_30.png';
+		} else if (pourcentageSliderValue#id# > 20 && pourcentageSliderValue#id# <=25) {
+			i#id#='_20.png';
+		} else if (pourcentageSliderValue#id# > 15 && pourcentageSliderValue#id# <=20) {
+			i#id#='_20.png';
+		} else if (pourcentageSliderValue#id# > 10 && pourcentageSliderValue#id# <=15) {
+			i#id#='_10.png';
+		} else if (pourcentageSliderValue#id# > 5 && pourcentageSliderValue#id# <=10) {
+			i#id#='_10.png';
+		} else if (pourcentageSliderValue#id# >0 && pourcentageSliderValue#id# <=5) {
+			i#id#='_10.png';
+		} else {
+			i#id#='_OFF.png';
+		}
+		
+		
+		var img#id# ='plugins/roundSliderLight/core/template/img/' + typeLight;	
+		writeToConsole('image lampe choisi : ' + img#id#);
+		
+		defineImage(eqId,pourcentageSliderValue#id#,minValue#id#,img#id#,i#id#);
+	}
+	
+	function defineImage(eqId,pourcentageSliderValue#id#,minValue#id#,img#id#,indice#id# ){
+        //console.log("Etat de la lampe : " + $(eqId + ' .main').attr('state'));
+		//Gestion etat de la lampe par la valeur de la luminosite		
+		if ($(eqId + ' .main').attr('state').includes('state')) {
+			$(eqId + ' .image').attr('src',img#id# + indice#id#);
+			if (pourcentageSliderValue#id# > 0 && pourcentageSliderValue#id# < 100) {
+				$(eqId + ' .labelPourcentage').text(pourcentageSliderValue#id# + '%');
+			} else if (pourcentageSliderValue#id# == 100) {
+				$(eqId + ' .labelPourcentage').text('ON');
+			} else {
+				$(eqId + ' .image').attr('src', img#id# + '_OFF.png');
+				$(eqId + ' .labelPourcentage').text('OFF');
+			}
+		} else {			
+			//gestion de l'etat de la lampe par sa valeur state
+			if ($(eqId + ' .main').attr('state') == '1') {
+				$(eqId + ' .image').attr('src',img#id# + indice#id# );
+				 if (pourcentageSliderValue#id# >= 0 && pourcentageSliderValue#id# < 100) {
+					$(eqId + ' .labelPourcentage').text(pourcentageSliderValue#id# + '%');
+				} else if (pourcentageSliderValue#id# == 100) {
+					$(eqId + ' .labelPourcentage').text('ON');
+				} else {
+					$(eqId + ' .labelPourcentage').text('OFF');
+				}
+			} else {
+				$(eqId + ' .image').attr('src', img#id# + '_OFF.png');
+				$(eqId + ' .labelPourcentage').text('OFF');
+			}
+		}
+		
+		$(eqId + ' .lPourcentage').css('font-weight','bolder');
+		$(eqId + ' .lPourcentage').css('font-size','small');
+	}
+	</script>
+<style>
+	.main {
+		width: 332px;
+		height: 205px;
+      	border-radius: 10px;
+		border-style: none;
+		border-color:rgb(138, 134, 133);
+		border-width: 1px;
+		//padding-left:10px;
+		//padding-top:20px;
+    }
+	
+	.mainLight{
+		width: 150px;
+		height: 160px;
+      	border-radius: 10px;
+		border-width: 1px;
+	}
+	
+	.secondary{
+		height:100%;
+		width:332px;
+      	position:relative;
+		float:left;
+      	top:-25px;
+	}
+    
+    .separateDiv{
+      	width: 100%;
+		height: 5px;
+    }
+    
+    .divLabel{
+      	text-align:center;
+  		background-color: #424242;
+      	border-radius: 10px;	
+      	height:20px;
+      	width:98%;
+    }
+    
+    .spanLabel{
+      	color: white;
+      	vertical-align: middle;
+      	line-height:20px;
+      	width:95%;
+    }
+
+	.imageDiv {
+		width: 128px;
+		height: 128px;
+		border-radius: 50%;	
+      	margin:auto;
+		top:21px;
+		position: relative;
+		z-index:13;
+		background-color:blue;
+	}
+	
+	.image {      	
+		width: 128px;
+		height: 128px;
+		border-radius: 50%;	
+		position: relative;
+		z-index:14;
+	}
+	
+	.imageMain {      	
+		width: 128px;
+		height: 128px;
+		border-radius: 50%;	
+		position: relative;
+		z-index:14;
+		top:5px;
+	}
+  
+  	.image:hover {
+      	opacity:0.5;
+      	cursor:pointer;
+  	}
+  
+	.labelPourcentage{
+		width: 30px;
+		height: 20px;
+		color: white;	
+		position: relative;
+		z-index:16;
+	}
+	
+	.labelPourcentageMain{
+		width: 30px;
+		height: 20px;
+		color: white;	
+		position: relative;
+		z-index:16;
+	}
+	
+	.colorChoice{
+		width: 50px;
+		height: 180px;
+		float:right;
+		position: relative;
+		margin-right:5px;
+      	top:-25px;
+	}
+
+  
+  	.buttonColor1, .buttonColor2,.buttonColor3, .buttonColor4 {
+      	width: 38px;
+		height: 38px;
+		border-radius:50%;
+		margin-top:5px;
+		margin-bottom:5px;
+		margin-left:5px;
+  	}
+  
+	
+	.buttonColor1:hover,.buttonColor2:hover,.buttonColor3:hover,.buttonColor4:hover {
+		cursor: pointer;
+		border-style:dashed;
+		border-color:yellow;
+	}
+	    
+	.rs-bar .rs-seperator.rs-border {
+	  display: none;
+	}
+  
+  	.rs-control .rs-bg-color {
+  		background-color: transparent;
+  	}
+	
+	.colorCircle {
+		width: 146px;
+		height: 146px;
+      	float:left;
+		bottom:-90px;
+		padding-left:3px;
+	}
+  
+	.farbtastic {
+		position: relative;
+      	float:left;
+      	padding-left:3px;
+      	padding-right:3px;
+      	top : 25px;
+	}
+  
+	.farbtastic * {
+	position: absolute;
+	cursor: crosshair;
+      //float:left;
+	}
+  
+	.farbtastic, .farbtastic .wheel {
+	width: 146px;
+	height: 146px;
+      //float:left;
+	}
+  
+	.farbtastic .color, .farbtastic .overlay {
+	top: 36px;
+	left: 36px;
+	width: 75px;
+	height: 75px;
+	}
+  
+	.farbtastic .wheel {
+	background: url(plugins/roundSliderLight/core/template/dashboard/ColorCircle/wheel.png) no-repeat;
+	width: 146px;
+	height: 146px;
+	}
+  
+	.farbtastic .overlay {
+	background: url(plugins/roundSliderLight/core/template/dashboard/ColorCircle/mask.png) no-repeat;
+	}
+  
+	.farbtastic .marker {
+	width: 17px;
+	height: 17px;
+	margin: -8px 0 0 -8px;
+	overflow: hidden; 
+	background: url(plugins/roundSliderLight/core/template/dashboard/ColorCircle/marker.png) no-repeat;
+	}
+	
+	.modal {
+	  display: none; /* Hidden by default */
+	  position: fixed; /* Stay in place */
+	  z-index: 100; /* Sit on top */
+	  width: 100%; /* Full width */
+	  height: 100%; /* Full height */
+	  overflow: auto; /* Enable scroll if needed */
+	  background-color: rgb(0,0,0); /* Fallback color */
+	  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+	}
+
+	.close {
+		font-size:30px;
+		padding-right:10px;
+	}
+	
+	/* Modal Content */
+	.modal-content {
+	  border-radius: 10px;
+	  width: 710px;
+	  height:520px;
+	}
+  
+  	.modal-global {
+      	margin-left: 50%;
+  		margin-top: 25%;
+  		transform: translate(-50%, -50%);
+	}
+</style>
