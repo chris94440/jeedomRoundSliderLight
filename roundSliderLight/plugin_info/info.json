@@ -1,0 +1,13 @@
+{
+	"id" : "roundSliderLight",
+	"name" : "Round slider light",
+	"description" : "Plugin permettant de gérer luminosité, température et couleur des ampoules connectées",
+	"licence" : "AGPL",
+	"author" : "Christophe Demongeot",
+	"require" : "4",
+	"category" : "devicecommunication",
+	"compatibility" : ["miniplus","smart","rpi","docker","diy","mobile","v4"],
+	"hasOwnDeamon" : false,
+ 	"documentation" : "",
+	"changelog" : ""
+}
